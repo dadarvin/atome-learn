@@ -1,5 +1,8 @@
 package com.atome.atomelearn.model;
 
+import org.springframework.context.annotation.Bean;
+
+
 public class Counter {
     public int counter;
 

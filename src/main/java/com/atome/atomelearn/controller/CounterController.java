@@ -54,6 +54,11 @@ public class CounterController {
 
         }
 
-        return new ResponseEntity<>(response, httpStatus);
+        return responseReturn(response, httpStatus);
+//        return new ResponseEntity<>(response, httpStatus);
+    }
+
+    private ResponseEntity<CounterResponse> responseReturn(CounterResponse counterResponse, HttpStatus httpStatus) {
+        return new ResponseEntity<>(counterResponse, httpStatus);
     }
 }
