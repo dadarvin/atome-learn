@@ -25,6 +25,11 @@ public class Counter {
 
     public void setCounter(int val) {
         this.counter = val;
+        addTwoCounter();
+    }
+
+    private void addTwoCounter() {
+
     }
 }
 
