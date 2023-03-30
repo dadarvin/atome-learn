@@ -1,22 +1,24 @@
 package com.atome.atomelearn.model;
 
-import org.springframework.context.annotation.Bean;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "counter")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Counter {
-    public int counter;
-
-    public Counter(int counter) {
-        this.counter = counter;
-    }
-
-    public Counter() {
-        this.counter = 0;
-    }
-
-    public int getCounter(){
-        return this.counter;
-    }
+    @Id
+    private int id;
+    private int counter;
 
     public void incCounter() {
         this.counter++;
@@ -24,15 +26,6 @@ public class Counter {
 
     public void decCounter() {
         this.counter--;
-    }
-
-    public void setCounter(int val) {
-        this.counter = val;
-        addTwoCounter();
-    }
-
-    private void addTwoCounter() {
-
     }
 }
 

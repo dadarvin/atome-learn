@@ -17,45 +17,52 @@ public class CounterController {
     @Autowired
     private CounterService counterService;
 
-    @GetMapping("/get")
-    public ResponseEntity<CounterResponse> getCounter() {
-        int cntValue = counterService.getCounter();
-        CounterResponse response = new CounterResponse(HttpStatus.OK.value(), cntValue);
+    @GetMapping("/get/{id}")
+    public ResponseEntity<CounterResponse> getCounter(
+            @PathVariable(value = "id") int id
+    ) {
+        int cntValue = counterService.getCounter(id);
+        CounterResponse response = new CounterResponse(CounterResponse.ApiResponseCode.SUCCESS ,cntValue);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return responseReturn(response, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<CounterResponse> addCounter() {
-        try {
-            counterService.incrementCounter();
-            CounterResponse response = new CounterResponse(HttpStatus.OK.value(), CounterResponse.OPERATION_SUCCESS);
-
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (CounterException c) {
-            CounterResponse response = new CounterResponse(HttpStatus.BAD_REQUEST.value(), c.getMessage());
-
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PostMapping("/dec")
-    public ResponseEntity<CounterResponse> decCounter() {
+    @PostMapping("/add/{id}")
+    public ResponseEntity<CounterResponse> addCounter(
+            @PathVariable(value = "id") int id
+    ) {
         CounterResponse response;
         HttpStatus httpStatus;
         try {
-            counterService.decreaseCounter();
-            response = new CounterResponse(HttpStatus.OK.value(), CounterResponse.OPERATION_SUCCESS);
+            counterService.incrementCounter(id);
+            response = new CounterResponse(CounterResponse.ApiResponseCode.SUCCESS, CounterResponse.OPERATION_SUCCESS);
+            httpStatus = HttpStatus.OK;
+        } catch (CounterException c) {
+            response = new CounterResponse(CounterResponse.ApiResponseCode.BAD_REQUEST, c.getMessage());
+            httpStatus = HttpStatus.BAD_REQUEST;
+        }
+
+        return responseReturn(response, httpStatus);
+    }
+
+    @PostMapping("/dec/{id}")
+    public ResponseEntity<CounterResponse> decCounter(
+            @PathVariable(value = "id") int id
+    ) {
+        CounterResponse response;
+        HttpStatus httpStatus;
+        try {
+            counterService.decreaseCounter(id);
+            response = new CounterResponse(CounterResponse.ApiResponseCode.SUCCESS, CounterResponse.OPERATION_SUCCESS);
             httpStatus = HttpStatus.OK;
 
         } catch (CounterException c) {
-            response = new CounterResponse(HttpStatus.BAD_REQUEST.value(), c.getMessage());
+            response = new CounterResponse(CounterResponse.ApiResponseCode.BAD_REQUEST, c.getMessage());
             httpStatus = HttpStatus.BAD_REQUEST;
 
         }
 
         return responseReturn(response, httpStatus);
-//        return new ResponseEntity<>(response, httpStatus);
     }
 
     private ResponseEntity<CounterResponse> responseReturn(CounterResponse counterResponse, HttpStatus httpStatus) {

@@ -7,27 +7,72 @@ import com.atome.atomelearn.model.CounterResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class CounterService {
     @Autowired
     public CounterRepository counterRepository;
-    private Counter counter = new Counter();
 
-    public int getCounter() {
-        return counter.getCounter();
+    private Counter generateCounter(int id) {
+        Counter countGenerate = Counter.builder()
+                .id(id)
+                .counter(0)
+                .build();
+        counterRepository.save(countGenerate);
+
+        return countGenerate;
     }
 
-    public void incrementCounter() {
-        if (counter.counter < Integer.MAX_VALUE){
+    private void updateCounter(Counter counter) {
+        counterRepository.save(counter);
+    }
+
+    public int getCounter(int id) {
+        Optional<Counter> counterList = counterRepository.findById(id);
+
+        if (counterList.isPresent()) {
+            return counterList.get().getCounter();
+        } else {
+            Counter tempCounter = generateCounter(id);
+
+            return tempCounter.getCounter();
+        }
+    }
+
+    public void incrementCounter(int id) {
+        Optional <Counter> counterList = counterRepository.findById(id);
+        Counter counter;
+
+        if (!counterList.isPresent()) {
+            counter = generateCounter(id);
+        } else {
+            counter = counterList.get();
+        }
+
+        if (counter.getCounter() < Integer.MAX_VALUE){
             counter.incCounter();
+            updateCounter(counter);
         } else {
             throw new CounterException("Counter value over the integer limit");
         }
     }
 
-    public void decreaseCounter() {
-        if (counter.counter > 0) {
+    public void decreaseCounter(int id) {
+        Optional <Counter> counterList = counterRepository.findById(id);
+        Counter counter;
+
+        if (!counterList.isPresent()) {
+            counter = generateCounter(id);
+        } else {
+            counter = counterList.get();
+        }
+
+        if (counter.getCounter() > 0) {
             counter.decCounter();
+            updateCounter(counter);
         } else {
             throw new CounterException("Counter value can't smaller than zero");
         }
