@@ -1,7 +1,6 @@
 package com.atome.atomelearn.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -10,6 +9,7 @@ public class CustomerResponse {
 
     public static final String OPERATION_SUCCESS = "success";
 
+    //TODO: code is not necessary, just use status and message
     public int code;
     public Customer customer;
     public List<Customer> customers;

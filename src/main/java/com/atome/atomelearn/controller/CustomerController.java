@@ -2,11 +2,9 @@ package com.atome.atomelearn.controller;
 
 import com.atome.atomelearn.exceptions.CustomerException;
 import com.atome.atomelearn.model.ApiResponseCode;
-import com.atome.atomelearn.model.CounterResponse;
 import com.atome.atomelearn.model.Customer;
 import com.atome.atomelearn.model.CustomerResponse;
 import com.atome.atomelearn.service.CustomerService;
-import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,14 +69,20 @@ public class CustomerController {
 
     @PostMapping("/add")
     public ResponseEntity<CustomerResponse> addCustomer(
+            //TODO: receive string instead in serialized form use RequestEntity<String>
+            // Advantage: we can return specific error instead just getting BAD_REQUEST
             @RequestBody Customer request
             ) {
         CustomerResponse response;
+        //TODO: httpStatus should be put inside the customerResopnse object instead for more cleaner code
         HttpStatus httpStatus;
 
         logger.info("Received POST Request for addCustomer with data: {}", request);
 
+        //TODO: validation for the request should be done here
+
         try {
+            //TODO: pass object, after deserializing it instead
             customerService.addCustomer(request.getName(), request.getBirthday(), request.getCountry());
             response = new CustomerResponse(ApiResponseCode.SUCCESS.code, CustomerResponse.OPERATION_SUCCESS);
             httpStatus = HttpStatus.OK;
@@ -87,6 +91,7 @@ public class CustomerController {
         } catch (CustomerException c) {
             response = new CustomerResponse(ApiResponseCode.BAD_REQUEST.code, c.getMessage());
             httpStatus = HttpStatus.BAD_REQUEST;
+
             logger.error("Returning POST Request for addCustomer with status fail {}", c.getMessage());
         }
 
