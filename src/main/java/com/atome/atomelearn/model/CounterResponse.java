@@ -11,16 +11,7 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CounterResponse {
-    public enum ApiResponseCode{
-        SUCCESS(HttpStatus.OK.value()),
-        BAD_REQUEST(HttpStatus.BAD_REQUEST.value()),
-        INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
-        private int code;
-        ApiResponseCode(int code) {
-            this.code = code;
-        }
-    }
     public int code;
     public Integer counter;
     public String status;

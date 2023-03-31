@@ -1,8 +1,11 @@
 package com.atome.atomelearn.controller;
 
 import com.atome.atomelearn.exceptions.CounterException;
+import com.atome.atomelearn.model.ApiResponseCode;
 import com.atome.atomelearn.model.CounterResponse;
 import com.atome.atomelearn.service.CounterService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +25,7 @@ public class CounterController {
             @PathVariable(value = "id") int id
     ) {
         int cntValue = counterService.getCounter(id);
-        CounterResponse response = new CounterResponse(CounterResponse.ApiResponseCode.SUCCESS ,cntValue);
+        CounterResponse response = new CounterResponse(ApiResponseCode.SUCCESS ,cntValue);
 
         return responseReturn(response, HttpStatus.OK);
     }
@@ -35,10 +38,10 @@ public class CounterController {
         HttpStatus httpStatus;
         try {
             counterService.incrementCounter(id);
-            response = new CounterResponse(CounterResponse.ApiResponseCode.SUCCESS, CounterResponse.OPERATION_SUCCESS);
+            response = new CounterResponse(ApiResponseCode.SUCCESS, CounterResponse.OPERATION_SUCCESS);
             httpStatus = HttpStatus.OK;
         } catch (CounterException c) {
-            response = new CounterResponse(CounterResponse.ApiResponseCode.BAD_REQUEST, c.getMessage());
+            response = new CounterResponse(ApiResponseCode.BAD_REQUEST, c.getMessage());
             httpStatus = HttpStatus.BAD_REQUEST;
         }
 
@@ -53,11 +56,11 @@ public class CounterController {
         HttpStatus httpStatus;
         try {
             counterService.decreaseCounter(id);
-            response = new CounterResponse(CounterResponse.ApiResponseCode.SUCCESS, CounterResponse.OPERATION_SUCCESS);
+            response = new CounterResponse(ApiResponseCode.SUCCESS, CounterResponse.OPERATION_SUCCESS);
             httpStatus = HttpStatus.OK;
 
         } catch (CounterException c) {
-            response = new CounterResponse(CounterResponse.ApiResponseCode.BAD_REQUEST, c.getMessage());
+            response = new CounterResponse(ApiResponseCode.BAD_REQUEST, c.getMessage());
             httpStatus = HttpStatus.BAD_REQUEST;
 
         }

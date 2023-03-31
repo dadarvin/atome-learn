@@ -3,12 +3,9 @@ package com.atome.atomelearn.service;
 import com.atome.atomelearn.dao.CounterRepository;
 import com.atome.atomelearn.exceptions.CounterException;
 import com.atome.atomelearn.model.Counter;
-import com.atome.atomelearn.model.CounterResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
