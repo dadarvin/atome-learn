@@ -3,8 +3,8 @@ package com.atome.atomelearn.service;
 import com.atome.atomelearn.dao.CustomerRepository;
 import com.atome.atomelearn.exceptions.CustomerException;
 import com.atome.atomelearn.model.Customer;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class CustomerService {
@@ -43,40 +44,34 @@ public class CustomerService {
 
             customer = optCustomer.get();
             customerRedis.opsForValue().set(id, customer);
+            customerRedis.expire(id, 60, TimeUnit.SECONDS);
         }
 
         return customer;
     }
 
-    public void addCustomer(String name, String birthday, String country) {
-        int customerAge;
+    public void addCustomer(Customer customer) {
         try {
-            customerAge = calculateAge(birthday);
+            customer.setAge(calculateAge(customer.getBirthday()));
         } catch (ParseException e) {
             throw new CustomerException("Failed to parse birthday format");
         }
 
-        if (name == "") {
+        if (StringUtils.isBlank(customer.getName()) || StringUtils.isEmpty(customer.getName())) {
             throw new CustomerException("name must not be empty !");
         }
-        // TODO: implement apache common utils, to check if null or empty (avoid null pointer exception)
-        if (birthday == "") {
+        if (StringUtils.isBlank(customer.getBirthday()) || StringUtils.isEmpty(customer.getBirthday())) {
             throw new CustomerException("birthday must not be empty !");
         }
-        if (country.isEmpty()) {
+        if (StringUtils.isBlank(customer.getCountry()) || StringUtils.isEmpty(customer.getCountry())) {
             throw new CustomerException("country must not be empty");
-        } else if (country.length() > 2){
+        } else if (customer.getCountry().length() > 2){
             throw new CustomerException("country should be filled 2 char only");
         }
 
-        Customer customer = Customer.builder()
-                .name(name)
-                .birthday(birthday)
-                .country(country)
-                .age(customerAge).build();
         customerRepository.save(customer);
-        //TODO: implement TTL
         customerRedis.opsForValue().set(customer.getId(), customer);
+        customerRedis.expire(customer.getId(), 60, TimeUnit.SECONDS);
     }
 
     public void deleteCustomer(int id) {
@@ -86,18 +81,22 @@ public class CustomerService {
             throw new CustomerException("customer with this id doesn't exist");
         }
 
-        // TODO: data in redis not deleted yet, need to check
         customerRepository.deleteById(id);
         customerRedis.delete(id);
     }
 
-    private int calculateAge(String birthday) throws ParseException {
+    public int calculateAge(String birthday) throws ParseException {
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate birthDate = LocalDate.parse(birthday, dateFormat);
         LocalDate currentDate = LocalDate.now();
 
-        //TODO: need to improve age, user might have 1 age older, difference in days might help
+        int tempAge = Period.between(birthDate, currentDate).getYears();
+        LocalDate nextBirthday = birthDate.withYear(currentDate.getYear());
 
-        return Period.between(birthDate, currentDate).getYears();
+        if (nextBirthday.isAfter(currentDate)) {
+            tempAge--;
+        }
+
+        return tempAge;
     }
 }

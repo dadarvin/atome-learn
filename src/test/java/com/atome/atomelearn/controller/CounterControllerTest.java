@@ -1,9 +1,7 @@
 package com.atome.atomelearn.controller;
 
 import com.atome.atomelearn.dao.CounterRepository;
-import com.atome.atomelearn.exceptions.CounterException;
 import com.atome.atomelearn.model.ApiResponseCode;
-import com.atome.atomelearn.model.Counter;
 import com.atome.atomelearn.model.CounterResponse;
 import com.atome.atomelearn.service.CounterService;
 import org.junit.jupiter.api.Test;
@@ -11,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

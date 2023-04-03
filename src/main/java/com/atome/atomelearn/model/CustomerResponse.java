@@ -1,6 +1,8 @@
 package com.atome.atomelearn.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -8,27 +10,27 @@ import java.util.List;
 public class CustomerResponse {
 
     public static final String OPERATION_SUCCESS = "success";
+    public static final String OPERATION_FAILED = "failed";
 
-    //TODO: code is not necessary, just use status and message
-    public int code;
     public Customer customer;
     public List<Customer> customers;
     public String status;
+    public String message;
+    @JsonIgnore
+    public HttpStatus httpStatus;
 
-    public CustomerResponse(int code, Customer customer) {
-        this.code = code;
+    public CustomerResponse(String status, Customer customer) {
+        this.status = status;
         this.customer = customer;
-        this.status = status;
     }
 
-    public CustomerResponse(int code, List<Customer> customers) {
-        this.code = code;
+    public CustomerResponse(String status, List<Customer> customers) {
+        this.status = status;
         this.customers = customers;
-        this.status = status;
     }
 
-    public CustomerResponse(int code, String status) {
-        this.code = code;
+    public CustomerResponse(String status, String message) {
         this.status = status;
+        this.message = message;
     }
 }
